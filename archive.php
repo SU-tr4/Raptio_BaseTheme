@@ -12,6 +12,15 @@ if (!isset($base_path)) {
     $base_path   = ($script_dir === '/' || $script_dir === '.') ? '' : rtrim($script_dir, '/');
 }
 
+// site_config の読み込みとグローバル化（ヘッダーメニューなどの表示に必要）
+global $site_config;
+if (!isset($site_config)) {
+    $data_dir    = dirname(__DIR__, 2) . '/data';
+    $site_config = file_exists($data_dir . '/site_config.json')
+        ? json_decode(file_get_contents($data_dir . '/site_config.json'), true)
+        : [];
+}
+
 get_template_part('header');
 
 global $posts, $all_categories, $req_category, $req_cpt, $current_category;
@@ -29,45 +38,41 @@ if (!empty($req_category)) {
                 $c_ids = [$p['category_id']];
             } else {
                 $c_ids = $p['categories'] ?? $p['category_ids'] ?? [];
-                if (!is_array($c_ids)) $c_ids = [$c_ids];
             }
-            if (in_array($cat_id, $c_ids, false)) {
+            if (in_array((string)$cat_id, array_map('strval', $c_ids), true)) {
                 $display_posts[] = $p;
             }
         }
     }
-    $archive_title = 'カテゴリー: ' . htmlspecialchars($current_category['name'] ?? $req_category, ENT_QUOTES, 'UTF-8');
+    $archive_title = htmlspecialchars($current_category['name'] ?? 'カテゴリー', ENT_QUOTES, 'UTF-8');
 
-} elseif (!empty($req_cpt)) {
-    // ── CPTアーカイブ ─────────────────────────────────────
-    // CPTインデックスは /data/posts_{cpt}_index.json に存在する
-    $cpt_index_file = SITE_ROOT . '/data/posts_' . $req_cpt . '_index.json';
-    if (file_exists($cpt_index_file)) {
-        $cpt_data = json_decode(file_get_contents($cpt_index_file), true);
-        if (is_array($cpt_data)) {
-            foreach ($cpt_data as $p) {
-                if (($p['status'] ?? '') !== 'public') continue;
-                $display_posts[] = $p;
-            }
-        }
-    }
-    $archive_title = 'アーカイブ: ' . htmlspecialchars($req_cpt, ENT_QUOTES, 'UTF-8');
-
-} else {
-    // ── 全投稿アーカイブ（フォールバック） ────────────────
+} else if (!empty($req_cpt)) {
+    // ── カスタム投稿タイプ(CPT)アーカイブ ──────────────────
     if (is_array($posts)) {
         foreach ($posts as $p) {
             if (($p['status'] ?? '') !== 'public') continue;
-            $display_posts[] = $p;
+            if (($p['post_type'] ?? 'post') === $req_cpt) {
+                $display_posts[] = $p;
+            }
         }
     }
-    $archive_title = 'アーカイブ';
+    // CPTのラベル名を取得
+    $cpt_file = dirname(__DIR__, 2) . '/data/cpt_config.json';
+    $cpt_data = file_exists($cpt_file) ? json_decode(file_get_contents($cpt_file), true) : [];
+    $cpt_label = $cpt_data[$req_cpt]['label'] ?? $req_cpt;
+    $archive_title = htmlspecialchars($cpt_label, ENT_QUOTES, 'UTF-8');
+}
+
+// 日付順にソート（新しい順）
+if (!empty($display_posts)) {
+    usort($display_posts, function($a, $b) {
+        return strcmp($b['date'] ?? '', $a['date'] ?? '');
+    });
 }
 ?>
 
 <div class="container layout-2col">
     <div class="content-area">
-
         <h1 class="archive-title"><?php echo $archive_title; ?></h1>
 
         <div class="post-list">

@@ -1,6 +1,6 @@
 <?php
 /**
- * RP-Official — index.php (テーマ トップページ)
+ * RP-Official — index.php (ブログトップ)
  */
 
 if (!isset($base_path)) {
@@ -12,18 +12,35 @@ if (!isset($base_path)) {
 
 get_template_part('header');
 
-global $posts, $all_categories;
+global $posts, $all_categories, $site_config;
+
+if (!isset($site_config)) {
+    $data_dir    = dirname(__DIR__, 2) . '/data';
+    $site_config = file_exists($data_dir . '/site_config.json')
+        ? json_decode(file_get_contents($data_dir . '/site_config.json'), true)
+        : [];
+}
+
+// 公開済み投稿を新しい順に並べる
 $display_posts = [];
 if (is_array($posts)) {
     foreach ($posts as $p) {
-        if (($p['status'] ?? '') !== 'public') continue;
-        $display_posts[] = $p;
+        if (($p['status'] ?? '') === 'public') {
+            $display_posts[] = $p;
+        }
     }
+    usort($display_posts, function($a, $b) {
+        return strcmp($b['date'] ?? '', $a['date'] ?? '');
+    });
 }
 ?>
 
-<div class="container layout-1col">
+<div class="container layout-2col">
     <div class="content-area">
+
+        <h1 class="archive-title">
+            <?php echo htmlspecialchars($site_config['site_name'] ?? 'ブログ', ENT_QUOTES, 'UTF-8'); ?>
+        </h1>
 
         <div class="post-list">
             <?php if (!empty($display_posts)): ?>
@@ -32,31 +49,40 @@ if (is_array($posts)) {
                     if (str_starts_with($permalink, '/')) {
                         $permalink = $base_path . $permalink;
                     }
+                    $excerpt = '';
+                    if (!empty($post['excerpt'])) {
+                        $excerpt = $post['excerpt'];
+                    } elseif (!empty($post['content'])) {
+                        $plain = strip_tags($post['content']);
+                        $excerpt = mb_strimwidth($plain, 0, 120, '…');
+                    }
                 ?>
                     <article class="post-card">
-                        <h2>
-                            <a href="<?php echo htmlspecialchars($permalink, ENT_QUOTES, 'UTF-8'); ?>">
-                                <?php echo htmlspecialchars($post['title'] ?? '無題', ENT_QUOTES, 'UTF-8'); ?>
-                            </a>
-                        </h2>
                         <div class="post-meta">
                             <time datetime="<?php echo htmlspecialchars(substr($post['date'] ?? '', 0, 10), ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo htmlspecialchars(substr($post['date'] ?? '', 0, 10), ENT_QUOTES, 'UTF-8'); ?>
                             </time>
                         </div>
-                        <?php if (!empty($post['excerpt'])): ?>
-                            <p class="post-excerpt"><?php echo htmlspecialchars($post['excerpt'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        <h2>
+                            <a href="<?php echo htmlspecialchars($permalink, ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($post['title'] ?? '無題', ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
+                        </h2>
+                        <?php if ($excerpt): ?>
+                            <p class="post-excerpt"><?php echo htmlspecialchars($excerpt, ENT_QUOTES, 'UTF-8'); ?></p>
                         <?php endif; ?>
                     </article>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="post-card">
-                    <p>表示できる記事がありません。</p>
+                    <p>まだ投稿がありません。</p>
                 </div>
             <?php endif; ?>
         </div>
 
     </div>
+
+    <?php get_template_part('sidebar'); ?>
 </div>
 
 <?php get_template_part('footer'); ?>
