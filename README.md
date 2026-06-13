@@ -1,5 +1,5 @@
-トップページ1カラム 
-下層ページ2カラム右サイドバー 
+トップページ1カラム   
+下層ページ2カラム右サイドバー  
 
 スクリ－ンショット1（トップページ）
 <img width="1167" height="436" alt="1e2d0e4b2576481c5aee122df5040f3b" src="https://github.com/user-attachments/assets/b8645f3c-357c-4bf7-af16-0704c1d21411" />
