@@ -1,0 +1,150 @@
+/*
+Theme Name: RP-Official
+Theme URI: 
+Author: Raptio User
+Author URI: 
+Description: 公式サイト向けテーマ。トップページは1カラム、下層は2カラム構成です。
+Version: 1.0.0
+License: MIT
+Tags: 1-column, 2-columns, official
+*/
+
+/* Base Styles */
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333333;
+    background-color: #f5f7fa;
+    line-height: 1.6;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+a {
+    color: #0056b3;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    background-color: #ffffff;
+    padding: 20px 0;
+    border-bottom: 1px solid #e1e4e8;
+    margin-bottom: 40px;
+}
+.site-title {
+    margin: 0;
+    font-size: 24px;
+}
+
+/* Layout */
+.layout-1col {
+    max-width: 800px;
+}
+.layout-2col {
+    display: flex;
+    gap: 40px;
+}
+.content-area {
+    flex: 1;
+    min-width: 0;
+}
+.site-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+/* Post Cards */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.post-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.post-card h2, .post-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+.post-card a {
+    color: #333333;
+}
+.post-card a:hover {
+    color: #0056b3;
+}
+.single-post {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.post-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 32px;
+}
+.archive-title {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 28px;
+    border-bottom: 2px solid #e1e4e8;
+    padding-bottom: 10px;
+}
+.post-meta {
+    color: #888888;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* Sidebar Widgets */
+.widget {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.widget h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-bottom: 2px solid #e1e4e8;
+    padding-bottom: 8px;
+}
+.widget ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.widget li {
+    margin-bottom: 10px;
+}
+.widget li:last-child {
+    margin-bottom: 0;
+}
+
+/* Footer */
+.site-footer {
+    background-color: #ffffff;
+    padding: 20px 0;
+    border-top: 1px solid #e1e4e8;
+    margin-top: 60px;
+    text-align: center;
+    color: #666666;
+    font-size: 14px;
+}
